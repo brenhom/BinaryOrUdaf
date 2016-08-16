@@ -17,7 +17,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.ListObjectInspector;
 
 /**
  * Takes a column of integer type values, or a column of lists of integer types,
- *  and outputs the binary OR aggregate of all elts in that column.
+ *  and outputs the binary OR aggregate of all elements in that column.
  */
 class BinaryOrUDAFResolver extends AbstractGenericUDAFResolver {
 	static final Log LOG = LogFactory.getLog(BinaryOrUDAFResolver.class.getName());

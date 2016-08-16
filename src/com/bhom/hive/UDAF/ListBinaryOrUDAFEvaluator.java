@@ -14,8 +14,6 @@ public class ListBinaryOrUDAFEvaluator  extends GenericUDAFEvaluator {
 	ObjectInspector outputOI;
 	PrimitiveObjectInspector longOI;
 	
-	long total = 0;
-	
 	@Override
     public ObjectInspector init(Mode m, ObjectInspector[] parameters)
             throws HiveException {
@@ -39,7 +37,7 @@ public class ListBinaryOrUDAFEvaluator  extends GenericUDAFEvaluator {
     }
 	
 	static class BinaryOrAgg extends GenericUDAFEvaluator.AbstractAggregationBuffer {
-        long sum = 0L;
+        long sum;
         
         void or (long num){
         	sum |= num;
@@ -49,6 +47,7 @@ public class ListBinaryOrUDAFEvaluator  extends GenericUDAFEvaluator {
 	@Override
 	public AggregationBuffer getNewAggregationBuffer() throws HiveException {
 		BinaryOrAgg result = new BinaryOrAgg();
+		reset(result);
 		return result;
 	}
 
@@ -83,22 +82,21 @@ public class ListBinaryOrUDAFEvaluator  extends GenericUDAFEvaluator {
 	}
 
 	@Override
-	public void reset(AggregationBuffer arg0) throws HiveException {
-		BinaryOrAgg myagg = new BinaryOrAgg();
+	public void reset(AggregationBuffer agg) throws HiveException {
+		BinaryOrAgg myagg = (BinaryOrAgg) agg;
+		myagg.sum = 0L;
 	}
 
 	@Override
 	public Object terminate(AggregationBuffer agg) throws HiveException {
 		BinaryOrAgg myagg = (BinaryOrAgg) agg;
-		total = myagg.sum;
-		return total;
+		return myagg.sum;
 	}
 
 	@Override
 	public Object terminatePartial(AggregationBuffer agg) throws HiveException {
 		BinaryOrAgg myagg = (BinaryOrAgg) agg;
-		total |= myagg.sum;
-		return total;
+		return myagg.sum;
 	}
 
 }
